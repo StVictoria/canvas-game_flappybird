@@ -12,9 +12,15 @@ let gamespeed = 2;
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  handleObstacles();
   bird.update();
   bird.draw();
+  handleParticles();
+  if (handleCollision()) return;
   requestAnimationFrame(animate);
+  angle += 0.12;
+  hue++;
+  frame++;
 }
 animate();
 
@@ -25,3 +31,20 @@ window.addEventListener("keydown", function (e) {
 window.addEventListener("keyup", function (e) {
   if (e.code === "Space") spacePressed = false;
 });
+
+const bang = new Image();
+bang.src = "/image/bang.png";
+function handleCollision() {
+  for (let i = 0; i < obstaclesArray.length; i++) {
+    if (
+      bird.x < obstaclesArray[i].x + obstaclesArray[i].width &&
+      bird.x + bird.width > obstaclesArray[i].x &&
+      ((bird.y < 0 + obstaclesArray[i].top && bird.y + bird.height > 0) ||
+        (bird.y > canvas.height - obstaclesArray[i].bottom &&
+          bird.y + bird.height < canvas.height))
+    ) {
+      ctx.drawImage(bang, bird.x - 40, bird.y - 35, 100, 70);
+      return true;
+    }
+  }
+}
